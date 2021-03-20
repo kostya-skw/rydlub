@@ -1,0 +1,75 @@
+- name: Install postgresql
+  apt:
+    name: postgresql-10
+    state: present
+  when:
+    ansible_os_family == "Debian"
+
+- name: Install postgresql
+  dnf:
+    name: postgresql-10
+    state: latest
+  when:
+    ansible_os_family == "RedHat"
+
+- name:  Add or remove a user (role) from a PostgreSQL server instance
+  become: yes
+  become_user: postgres
+  postgresql_user:
+    name: "odoo"
+    password: "odoo"
+
+- name: Install common packages
+  apt:
+    name:
+      - python3-pip
+  when:
+    ansible_os_family == "Debian"
+
+- name: Install common packages
+  dnf:
+    name: python3-pip
+    state: latest
+  when:
+    ansible_os_family == "RedHat"
+
+- pip:
+    name: xlwt num2words
+
+- name: Add an Apt signing key
+  apt_key:
+    url: https://nightly.odoo.com/odoo.key                     
+    state: present
+  when:
+    ansible_os_family == "Debian"
+
+- name: add repo odoo 
+  apt_repository:
+    repo: "deb http://nightly.odoo.com/14.0/nightly/deb/ ./"
+    state: present
+    filename: odoo 
+  when:
+    ansible_os_family == "Debian"
+
+- name: Install odoo
+  apt:
+    name: odoo
+    state: present
+  when:
+    ansible_os_family == "Debian"
+
+- name: Add repository
+  yum_repository:
+    name: odoo
+    description: Odoo repo
+    baseurl: https://nightly.odoo.com/14.0/nightly/rpm/odoo.repo
+  when:
+    ansible_os_family == "RedHat"
+
+- name: Install Odoo
+  dnf:
+    name: odoo
+    state: latest
+  when:
+    ansible_os_family == "RedHat"
+

@@ -1,0 +1,16 @@
+stages:
+  - build
+  - push
+
+build:
+  stage: build
+  script:
+    - echo "Build"
+    - docker build -t skw85/rydlub
+
+push:
+  stage: push
+  script: |
+    - echo "Push"
+    - cat .dockerkey | docker login --username skw85 --password-stdin
+    - docker push skw85/rydlub
